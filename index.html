@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLISAREID — НАВИГАЦИЯ</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=bebas-neue:400|montserrat:300,400,600,700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+/* ── THEME TOKENS ── */
+:root{
+  --pink:#d946ef;
+  --blur:blur(20px) saturate(180%);
+  --blur-hvy:blur(40px) saturate(200%);
+  --tr:.3s cubic-bezier(.16,1,.3,1);
+}
+[data-theme="light"]{
+  --bg:linear-gradient(135deg,#fdf4ff 0%,#fce7f3 30%,#ede9fe 60%,#f0f9ff 100%);
+  --orb1:rgba(232,121,249,.42);--orb2:rgba(139,92,246,.22);--orb3:rgba(244,114,182,.18);
+  --text:#1a0a2e;--text3:rgba(109,40,217,.45);
+  --g-bg:rgba(255,255,255,.18);--g-bg2:rgba(255,255,255,.28);
+  --g-bd:rgba(255,255,255,.45);--g-bd2:rgba(255,255,255,.72);
+  --g-sh:0 8px 32px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.07);
+  --g-sh2:0 16px 48px rgba(0,0,0,.16),0 4px 16px rgba(0,0,0,.09);
+  --sheen:rgba(255,255,255,.9);--sheen2:rgba(255,255,255,.38);
+  --ic:rgba(255,255,255,.55);--ic-bd:rgba(255,255,255,.75);
+  --modal:rgba(255,255,255,.72);--modal-link:rgba(255,255,255,.42);
+  --badge:rgba(217,70,239,.11);--badge-bd:rgba(217,70,239,.25);
+  --divider:rgba(217,70,239,.2);
+  --num:#2d0a4e;
+  --copy:rgba(255,255,255,.55);--copy-bd:rgba(255,255,255,.75);
+  --toast:rgba(255,255,255,.88);
+  --tog:rgba(255,255,255,.45);--tog-bd:rgba(255,255,255,.72);
+}
+[data-theme="dark"]{
+  --bg:linear-gradient(135deg,#0d0118 0%,#130a22 30%,#1a0f2e 60%,#0f0820 100%);
+  --orb1:rgba(168,50,200,.35);--orb2:rgba(100,50,200,.28);--orb3:rgba(180,50,140,.22);
+  --text:#f0e6ff;--text3:rgba(192,132,252,.45);
+  --g-bg:rgba(255,255,255,.07);--g-bg2:rgba(255,255,255,.12);
+  --g-bd:rgba(255,255,255,.12);--g-bd2:rgba(255,255,255,.22);
+  --g-sh:0 8px 32px rgba(0,0,0,.35),0 2px 8px rgba(0,0,0,.25);
+  --g-sh2:0 16px 48px rgba(0,0,0,.5),0 4px 16px rgba(0,0,0,.3);
+  --sheen:rgba(255,255,255,.12);--sheen2:rgba(255,255,255,.06);
+  --ic:rgba(255,255,255,.1);--ic-bd:rgba(255,255,255,.16);
+  --modal:rgba(20,8,35,.78);--modal-link:rgba(255,255,255,.07);
+  --badge:rgba(217,70,239,.18);--badge-bd:rgba(217,70,239,.35);
+  --divider:rgba(192,132,252,.2);
+  --num:#e9d5ff;
+  --copy:rgba(255,255,255,.1);--copy-bd:rgba(255,255,255,.18);
+  --toast:rgba(20,8,35,.9);
+  --tog:rgba(255,255,255,.1);--tog-bd:rgba(255,255,255,.18);
+}
+
+html{scroll-behavior:smooth}
+body{min-height:100vh;font-family:'Montserrat',-apple-system,sans-serif;overflow-x:hidden;color:var(--text);transition:color var(--tr)}
+
+/* BG */
+.bg{position:fixed;inset:0;z-index:0;background:var(--bg);transition:background var(--tr)}
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;will-change:transform}
+.orb-1{width:380px;height:380px;top:-90px;right:-40px;background:radial-gradient(circle,var(--orb1),transparent 70%);filter:blur(65px);animation:drift 14s ease-in-out infinite}
+.orb-2{width:260px;height:260px;bottom:60px;left:-50px;background:radial-gradient(circle,var(--orb2),transparent 70%);filter:blur(55px);animation:drift 11s ease-in-out infinite;animation-delay:-4s}
+.orb-3{width:200px;height:200px;top:42%;right:6%;background:radial-gradient(circle,var(--orb3),transparent 70%);filter:blur(50px);animation:drift 9s ease-in-out infinite;animation-delay:-7s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(18px,-26px) scale(1.04)}66%{transform:translate(-12px,16px) scale(.96)}}
+
+/* LAYOUT */
+.wrap{position:relative;z-index:10;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:52px 16px 64px;max-width:480px;margin:0 auto}
+
+/* THEME TOGGLE */
+.tog{
+  position:fixed;top:16px;right:16px;z-index:50;
+  width:44px;height:44px;border-radius:50%;
+  background:var(--tog);border:1px solid var(--tog-bd);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  box-shadow:var(--g-sh);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:20px;
+  transition:background var(--tr),border-color var(--tr),transform .2s ease,box-shadow var(--tr);
+  -webkit-tap-highlight-color:transparent;user-select:none;
+}
+.tog:hover{background:var(--g-bg2);border-color:var(--g-bd2);transform:scale(1.08)}
+.tog:active{transform:scale(.9)}
+.tog-icon{display:block;transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.tog.spin .tog-icon{transform:rotate(180deg)}
+
+/* HEADER */
+.hdr{
+  width:100%;margin-bottom:24px;padding:28px 24px 22px;
+  border-radius:32px;text-align:center;position:relative;overflow:hidden;
+  background:var(--g-bg);border:1px solid var(--g-bd);
+  backdrop-filter:var(--blur-hvy);-webkit-backdrop-filter:var(--blur-hvy);
+  box-shadow:var(--g-sh),0 0 0 .5px var(--sheen) inset;
+  transition:background var(--tr),border-color var(--tr),box-shadow var(--tr);
+  animation:headerIn .8s cubic-bezier(.16,1,.3,1) both;
+}
+.hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--sheen) 50%,transparent)}
+.hdr::after{content:'';position:absolute;top:-40%;left:-20%;width:60%;height:80%;background:radial-gradient(ellipse,var(--sheen2) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+@keyframes headerIn{from{opacity:0;transform:translateY(-20px) scale(.97)}to{opacity:1;transform:none}}
+
+.logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,14vw,86px);letter-spacing:10px;line-height:1;background:linear-gradient(135deg,#7c3aed 0%,#c026d3 40%,#db2777 80%,#d946ef 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 8px rgba(192,38,211,.22))}
+.badge{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 14px;background:var(--badge);border:1px solid var(--badge-bd);border-radius:20px;font-size:11px;font-weight:600;letter-spacing:4px;color:var(--pink);transition:background var(--tr),border-color var(--tr)}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--pink);flex-shrink:0}
+.tagline{margin-top:10px;font-size:12px;font-weight:400;letter-spacing:1.5px;color:var(--text3);font-style:italic;transition:color var(--tr)}
+.gline{width:100px;height:2px;margin:12px auto 0;border-radius:2px;background:linear-gradient(90deg,transparent,var(--pink),transparent);animation:lpulse 2.5s ease-in-out infinite}
+@keyframes lpulse{0%,100%{opacity:.4;transform:scaleX(.6)}50%{opacity:1;transform:scaleX(1)}}
+
+/* NAV LABEL */
+.nav-lbl{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;width:100%;display:flex;align-items:center;gap:10px;transition:color var(--tr)}
+.nav-lbl::before,.nav-lbl::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--divider),transparent)}
+
+/* LINKS */
+.links{width:100%;display:flex;flex-direction:column;gap:8px}
+
+.btn,.gbtn{
+  display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:20px;
+  position:relative;overflow:hidden;text-decoration:none;color:var(--text);
+  font-size:14px;font-weight:600;letter-spacing:.2px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  background:var(--g-bg);border:1px solid var(--g-bd);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  box-shadow:var(--g-sh),0 0 0 .5px var(--sheen) inset;
+  transition:background var(--tr),border-color var(--tr),box-shadow var(--tr),transform .2s cubic-bezier(.16,1,.3,1),color var(--tr);
+  opacity:0;animation:fadeUp .5s cubic-bezier(.16,1,.3,1) forwards;
+}
+.btn::before,.gbtn::before{content:'';position:absolute;top:0;left:0;right:0;height:44%;background:linear-gradient(180deg,var(--sheen2) 0%,transparent 100%);border-radius:19px 19px 0 0;pointer-events:none}
+.btn::after,.gbtn::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.09) 50%,transparent 70%);transform:translateX(-100%);transition:transform .6s ease}
+.btn:hover::after,.gbtn:hover::after{transform:translateX(100%)}
+.btn:hover,.gbtn:hover{background:var(--g-bg2);border-color:var(--g-bd2);box-shadow:var(--g-sh2),0 0 0 .5px var(--g-bd2) inset,0 0 16px rgba(217,70,239,.1);transform:translateY(-2px) scale(1.01)}
+.btn:active,.gbtn:active{transform:translateY(0) scale(.985)}
+
+.links>*:nth-child(1){animation-delay:.25s}.links>*:nth-child(2){animation-delay:.32s}.links>*:nth-child(3){animation-delay:.39s}.links>*:nth-child(4){animation-delay:.46s}.links>*:nth-child(5){animation-delay:.53s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.ic{width:38px;height:38px;border-radius:12px;flex-shrink:0;background:var(--ic);border:1px solid var(--ic-bd);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.06);transition:background var(--tr),border-color var(--tr)}
+.ic svg{display:block}
+.lbl{flex:1;min-width:0}
+.lbl-s{display:block;font-size:10px;font-weight:400;color:var(--text3);letter-spacing:.4px;margin-bottom:1px;transition:color var(--tr)}
+.lbl-m{display:block;font-size:14px;font-weight:700;color:var(--text);transition:color var(--tr)}
+.badge2{font-size:10px;font-weight:600;letter-spacing:.3px;padding:4px 10px;border-radius:20px;flex-shrink:0;background:var(--badge);border:1px solid var(--badge-bd);color:var(--pink);white-space:nowrap;transition:background var(--tr),border-color var(--tr)}
+.arr{font-size:13px;color:var(--text3);opacity:0;transition:transform .22s ease,opacity .22s ease}
+.btn:hover .arr{opacity:1;transform:translateX(3px)}
+
+/* DIVIDER */
+.divw{width:100%;display:flex;align-items:center;gap:10px;margin:16px 0 8px;opacity:0;animation:fadeUp .5s .62s cubic-bezier(.16,1,.3,1) forwards}
+.div-l{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--divider),transparent)}
+.div-t{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);white-space:nowrap;transition:color var(--tr)}
+
+/* DONATE */
+.don{width:100%;padding:13px 15px;border-radius:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:relative;overflow:hidden;background:var(--g-bg);border:1px solid var(--g-bd);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--g-sh),0 0 0 .5px var(--sheen) inset;opacity:0;animation:fadeUp .5s cubic-bezier(.16,1,.3,1) forwards;transition:background var(--tr),border-color var(--tr)}
+.don::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--sheen) 50%,transparent)}
+.don:nth-of-type(1){animation-delay:.68s}.don:nth-of-type(2){animation-delay:.75s}.don+.don{margin-top:8px}
+.don-info{flex:1;min-width:0}
+.don-lbl{font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:3px;transition:color var(--tr)}
+.don-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(14px,4vw,20px);letter-spacing:2px;color:var(--num);user-select:all;-webkit-user-select:all;word-break:break-all;transition:color var(--tr)}
+.cpybtn{flex-shrink:0;padding:8px 13px;border-radius:12px;background:var(--copy);border:1px solid var(--copy-bd);color:var(--pink);font-size:10px;font-weight:700;letter-spacing:.8px;cursor:pointer;text-transform:uppercase;font-family:'Montserrat',sans-serif;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.06);transition:background var(--tr),border-color var(--tr),transform .15s ease,box-shadow .2s}
+.cpybtn:hover{background:var(--g-bg2);box-shadow:0 4px 14px rgba(217,70,239,.18);transform:scale(1.04)}
+.cpybtn:active{transform:scale(.94)}
+.cpybtn.ok{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.4);color:#16a34a}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);padding:11px 22px;border-radius:30px;background:var(--toast);border:1px solid var(--g-bd2);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--g-sh);color:#16a34a;font-size:13px;font-weight:700;letter-spacing:.3px;z-index:999;pointer-events:none;white-space:nowrap;opacity:0;transition:transform .4s cubic-bezier(.16,1,.3,1),opacity .3s ease}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* FOOTER */
+.foot{margin-top:24px;font-size:11px;color:var(--text3);letter-spacing:1.5px;text-align:center;opacity:0;animation:fadeUp .5s 1s cubic-bezier(.16,1,.3,1) forwards;transition:color var(--tr)}
+.foot em{color:var(--pink);font-style:normal}
+.micrick{position:fixed;bottom:12px;left:12px;z-index:20;font-size:10px;letter-spacing:1.5px;color:var(--text3);pointer-events:none;transition:color var(--tr)}
+.micrick em{color:rgba(217,70,239,.45);font-style:normal}
+
+/* MODAL */
+.ov{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center;padding:0 12px 14px;background:rgba(0,0,0,.15);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s ease}
+@media(min-width:480px){.ov{align-items:center;padding:20px}}
+.ov.on{opacity:1;pointer-events:all}
+.modal{width:100%;max-width:460px;background:var(--modal);border:1px solid var(--g-bd2);border-radius:32px 32px 26px 26px;backdrop-filter:var(--blur-hvy);-webkit-backdrop-filter:var(--blur-hvy);box-shadow:0 0 0 .5px var(--g-bd2) inset,0 32px 80px rgba(0,0,0,.22),0 8px 24px rgba(0,0,0,.1);padding:22px 16px 18px;transform:translateY(56px) scale(.95);opacity:0;transition:transform .45s cubic-bezier(.16,1,.3,1),opacity .35s ease,background var(--tr),border-color var(--tr);position:relative;overflow:hidden;max-height:90vh;overflow-y:auto}
+@media(min-width:480px){.modal{border-radius:32px;transform:scale(.9) translateY(16px)}}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,var(--sheen2) 0%,transparent 100%);border-radius:32px 32px 0 0;pointer-events:none}
+.ov.on .modal{transform:none;opacity:1}
+.handle{width:38px;height:4px;border-radius:2px;background:var(--divider);margin:0 auto 16px;position:relative;z-index:1;transition:background var(--tr)}
+@media(min-width:480px){.handle{display:none}}
+.mhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;position:relative;z-index:1}
+.mtitle{font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:5px;background:linear-gradient(135deg,#7c3aed,#d946ef);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;display:flex;align-items:center;gap:7px}
+.mclose{width:28px;height:28px;border-radius:50%;background:var(--ic);border:1px solid var(--ic-bd);color:var(--text3);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background var(--tr),transform .18s ease}
+.mclose:hover{background:var(--g-bg2);transform:scale(1.12)}
+.mlinks{display:flex;flex-direction:column;gap:6px;position:relative;z-index:1}
+.mlink{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:16px;background:var(--modal-link);border:1px solid var(--g-bd);text-decoration:none;color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,.05);transition:background var(--tr),border-color var(--tr),transform .22s cubic-bezier(.16,1,.3,1),color var(--tr);position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
+.mlink::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--sheen) 50%,transparent)}
+.mlink:hover{background:var(--g-bg2);border-color:var(--g-bd2);transform:translateX(4px)}
+.mlink:active{transform:translateX(2px) scale(.98)}
+.mic{width:34px;height:34px;border-radius:10px;flex-shrink:0;background:var(--ic);border:1px solid var(--ic-bd);display:flex;align-items:center;justify-content:center;font-size:17px;transition:background var(--tr),border-color var(--tr)}
+.mic svg{display:block}
+.mlbl{flex:1}
+.mlbl-s{font-size:10px;color:var(--text3);display:block;margin-bottom:1px;transition:color var(--tr)}
+.mlbl-m{font-size:13px;font-weight:700;color:var(--text);transition:color var(--tr)}
+.marr{color:var(--text3);font-size:12px;opacity:.5;transition:transform .2s,opacity .2s}
+.mlink:hover .marr{transform:translateX(2px);opacity:1}
+.modal::-webkit-scrollbar{width:3px}
+.modal::-webkit-scrollbar-track{background:transparent}
+.modal::-webkit-scrollbar-thumb{background:var(--divider);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Theme toggle -->
+<button class="tog" id="tog" onclick="toggleTheme()" aria-label="Сменить тему">
+  <span class="tog-icon" id="tog-icon">🌙</span>
+</button>
+
+<!-- TikTok Modal -->
+<div class="ov" id="tt-ov" onclick="closeOv('tt-ov',event)">
+  <div class="modal">
+    <div class="handle"></div>
+    <div class="mhdr">
+      <div class="mtitle">
+        <svg width="19" height="19" viewBox="0 0 24 24"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#d946ef"/></linearGradient></defs><path fill="url(#g1)" d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
+        TIKTOK
+      </div>
+      <button class="mclose" onclick="closeOvBtn('tt-ov')">✕</button>
+    </div>
+    <div class="mlinks">
+      <a href="https://www.tiktok.com/@llisareid?_r=1&_t=ZT-93EmurX1rWH" target="_blank" class="mlink">
+        <div class="mic"><svg width="17" height="17" viewBox="0 0 24 24"><path fill="#d946ef" d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg></div>
+        <div class="mlbl"><span class="mlbl-s">Основной аккаунт</span><span class="mlbl-m">@llisareid</span></div>
+        <span class="marr">→</span>
+      </a>
+      <a href="https://www.tiktok.com/@llisareid11?_r=1&_t=ZG-93En5s4hgEj" target="_blank" class="mlink">
+        <div class="mic"><svg width="17" height="17" viewBox="0 0 24 24"><path fill="#a855f7" d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg></div>
+        <div class="mlbl"><span class="mlbl-s">Второй аккаунт</span><span class="mlbl-m">@llisareid11</span></div>
+        <span class="marr">→</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Telegram Modal -->
+<div class="ov" id="tg-ov" onclick="closeOv('tg-ov',event)">
+  <div class="modal">
+    <div class="handle"></div>
+    <div class="mhdr">
+      <div class="mtitle">
+        <svg width="19" height="19" viewBox="0 0 24 24"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#d946ef"/></linearGradient></defs><path fill="url(#g2)" d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        TELEGRAM
+      </div>
+      <button class="mclose" onclick="closeOvBtn('tg-ov')">✕</button>
+    </div>
+    <div class="mlinks">
+      <a href="https://t.me/llisareid" target="_blank" class="mlink">
+        <div class="mic"><svg width="17" height="17" viewBox="0 0 24 24"><path fill="#7c3aed" d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></div>
+        <div class="mlbl"><span class="mlbl-s">Основной канал</span><span class="mlbl-m">разъезд во все стороны</span></div>
+        <span class="marr">→</span>
+      </a>
+      <a href="https://t.me/llisareidd" target="_blank" class="mlink">
+        <div class="mic"><svg width="17" height="17" viewBox="0 0 24 24"><path fill="#9333ea" d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></div>
+        <div class="mlbl"><span class="mlbl-s">Общение</span><span class="mlbl-m">Чат</span></div>
+        <span class="marr">→</span>
+      </a>
+      <a href="https://t.me/anonimnyye_voprosy_bot?start=ev3k59" target="_blank" class="mlink">
+        <div class="mic">🙈</div>
+        <div class="mlbl"><span class="mlbl-s">Анонимно</span><span class="mlbl-m">Задать вопрос</span></div>
+        <span class="marr">→</span>
+      </a>
+      <a href="https://t.me/llisareid/2640" target="_blank" class="mlink">
+        <div class="mic">🎵</div>
+        <div class="mlbl"><span class="mlbl-s">Музыка</span><span class="mlbl-m">Послушать каверы</span></div>
+        <span class="marr">→</span>
+      </a>
+      <a href="https://t.me/llisareid/2703" target="_blank" class="mlink">
+        <div class="mic">🎨</div>
+        <div class="mlbl"><span class="mlbl-s">Заказать</span><span class="mlbl-m">Картина / роспись одежды</span></div>
+        <span class="marr">→</span>
+      </a>
+      <a href="https://t.me/yswmeng" target="_blank" class="mlink">
+        <div class="mic">💼</div>
+        <div class="mlbl"><span class="mlbl-s">Реклама, сотрудничество</span><span class="mlbl-m">@yswmeng</span></div>
+        <span class="marr">→</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Скопировано!</div>
+
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="logo">LLISAREID</div>
+    <div class="badge"><span class="dot"></span>TEAM</div>
+    <div class="tagline">любишь кататься? люби и катайся</div>
+    <div class="gline"></div>
+  </div>
+
+  <div class="nav-lbl"><span>навигация</span></div>
+
+  <div class="links">
+    <div class="gbtn" onclick="openOv('tg-ov')">
+      <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#d946ef"/></linearGradient></defs><path fill="url(#g3)" d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></div>
+      <div class="lbl"><span class="lbl-s">Канал, чат, вопросы и заказы</span><span class="lbl-m">Telegram</span></div>
+      <span class="badge2">6 ссылок</span>
+    </div>
+
+    <div class="gbtn" onclick="openOv('tt-ov')">
+      <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24"><defs><linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#d946ef"/></linearGradient></defs><path fill="url(#g4)" d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg></div>
+      <div class="lbl"><span class="lbl-s">Видео и контент</span><span class="lbl-m">TikTok</span></div>
+      <span class="badge2">2 аккаунта</span>
+    </div>
+
+    <a href="https://www.instagram.com/llisareid?igsh=MWZzbDBpajZ6b2Y4cg%3D%3D&utm_source=qr" target="_blank" class="btn">
+      <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24"><defs><linearGradient id="g5" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f97316"/><stop offset="50%" stop-color="#ec4899"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs><path fill="url(#g5)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div>
+      <div class="lbl"><span class="lbl-s">Instagram</span><span class="lbl-m">@llisareid</span></div>
+      <span class="arr">→</span>
+    </a>
+
+    <a href="https://youtube.com/@llisareid11?si=vkrpJWqFCmOGkFKn" target="_blank" class="btn">
+      <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24"><defs><linearGradient id="g6" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="#dc2626"/></linearGradient></defs><path fill="url(#g6)" d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div>
+      <div class="lbl"><span class="lbl-s">YouTube</span><span class="lbl-m">@llisareid11</span></div>
+      <span class="arr">→</span>
+    </a>
+
+    <a href="https://discord.gg/BUHkDqbXr" target="_blank" class="btn">
+      <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24"><defs><linearGradient id="g7" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#5865f2"/><stop offset="100%" stop-color="#7c86f5"/></linearGradient></defs><path fill="url(#g7)" d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></div>
+      <div class="lbl"><span class="lbl-s">Discord</span><span class="lbl-m">Чат сообщества</span></div>
+      <span class="arr">→</span>
+    </a>
+  </div>
+
+  <div class="divw">
+    <div class="div-l"></div>
+    <div class="div-t">поддержать донатом</div>
+    <div class="div-l"></div>
+  </div>
+
+  <div class="don">
+    <div class="don-info">
+      <div class="don-lbl">Тинькофф</div>
+      <div class="don-num">2200 7021 3067 1196</div>
+    </div>
+    <button class="cpybtn" onclick="doCopy(this,'2200702130671196')">Копировать</button>
+  </div>
+
+  <div class="don">
+    <div class="don-info">
+      <div class="don-lbl">Озон</div>
+      <div class="don-num">2204 3206 9926 9686</div>
+    </div>
+    <button class="cpybtn" onclick="doCopy(this,'2204320699269686')">Копировать</button>
+  </div>
+
+  <div class="foot"><em>LLISAREID TEAM</em> · рост 165, мотоцикл jhl lx6</div>
+</div>
+
+<div class="micrick">made by <em>Micrick</em></div>
+
+<script>
+// ── THEME ──
+const html=document.documentElement, togBtn=document.getElementById('tog'), togIcon=document.getElementById('tog-icon');
+function applyTheme(t){html.setAttribute('data-theme',t);togIcon.textContent=t==='light'?'🌙':'🌸';localStorage.setItem('theme',t)}
+function toggleTheme(){
+  const next=html.getAttribute('data-theme')==='light'?'dark':'light';
+  togBtn.classList.add('spin');
+  setTimeout(()=>togBtn.classList.remove('spin'),400);
+  applyTheme(next);
+}
+// init: saved → system → light
+(function(){
+  const s=localStorage.getItem('theme');
+  if(s){applyTheme(s);return}
+  applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+})();
+
+// ── MODALS ──
+function openOv(id){document.getElementById(id).classList.add('on');document.body.style.overflow='hidden'}
+function closeOvBtn(id){document.getElementById(id).classList.remove('on');document.body.style.overflow=''}
+function closeOv(id,e){if(e.target===document.getElementById(id))closeOvBtn(id)}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.ov.on').forEach(o=>{o.classList.remove('on');document.body.style.overflow=''})});
+
+// ── COPY ──
+function doCopy(btn,text){
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(()=>showOk(btn)).catch(()=>legacy(btn,text))}
+  else legacy(btn,text);
+}
+function legacy(btn,text){
+  const el=Object.assign(document.createElement('input'),{value:text,style:'position:absolute;opacity:0;top:0;left:0'});
+  document.body.appendChild(el);el.focus();el.setSelectionRange(0,99999);
+  const ok=document.execCommand('copy');document.body.removeChild(el);
+  if(ok)showOk(btn); else{btn.textContent='✓ Выделено';btn.classList.add('ok');setTimeout(()=>{btn.textContent='Копировать';btn.classList.remove('ok')},2500)}
+}
+function showOk(btn){
+  btn.textContent='✓ Скопировано';btn.classList.add('ok');
+  const t=document.getElementById('toast');t.classList.add('on');
+  setTimeout(()=>{btn.textContent='Копировать';btn.classList.remove('ok');t.classList.remove('on')},2000);
+}
+
+// ── PARALLAX ──
+let raf;const orbs=document.querySelectorAll('.orb');
+document.addEventListener('mousemove',e=>{
+  if(raf)return;
+  raf=requestAnimationFrame(()=>{
+    const x=(e.clientX/innerWidth-.5)*2,y=(e.clientY/innerHeight-.5)*2;
+    orbs.forEach((o,i)=>{const d=(i+1)*10;o.style.transform=`translate(${x*d}px,${y*d}px)`});
+    raf=null;
+  });
+},{passive:true});
+</script>
+</body>
+</html>
